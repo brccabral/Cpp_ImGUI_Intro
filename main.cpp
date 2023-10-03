@@ -117,9 +117,18 @@ int main ( int, char ** )
         glBindVertexArray ( vao );
         glDrawElements ( GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0 );
         glBindVertexArray ( 0 );
+        
+        // render your GUI
+        ImGui::Begin ( "Triangle Position/Color" );
+        
+        // * rotation control
+        static float rotation = 0.0; // * initial value
+        ImGui::SliderFloat ( "rotation", &rotation, 0, 2 * PI ); // * min, max
+        
+        ImGui::End();
 
         triangle_shader.setUniform ( "color", 1.0f, 1.0f, 1.0f );
-        triangle_shader.setUniform ( "rotation", 0.0f );
+        triangle_shader.setUniform ( "rotation", rotation );
         triangle_shader.setUniform ( "translation", 0.0f, 0.0f );
 
         // Render dear imgui into screen
