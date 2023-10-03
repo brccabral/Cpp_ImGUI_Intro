@@ -16,6 +16,39 @@ static void glfw_error_callback ( int error, const char *description )
     fprintf ( stderr, "Glfw Error %d: %s\n", error, description );
 }
 
+void create_triangle ( unsigned int &vbo, unsigned int &vao, unsigned int &ebo )
+{
+
+    // create the triangle
+    float triangle_vertices[] =
+    {
+        0.0f, 0.25f, 0.0f,	// position vertex 1
+        1.0f, 0.0f, 0.0f,	 // color vertex 1
+        0.25f, -0.25f, 0.0f,  // position vertex 1
+        0.0f, 1.0f, 0.0f,	 // color vertex 1
+        -0.25f, -0.25f, 0.0f, // position vertex 1
+        0.0f, 0.0f, 1.0f,	 // color vertex 1
+    };
+    unsigned int triangle_indices[] =
+    {
+        0, 1, 2
+    };
+    glGenVertexArrays ( 1, &vao );
+    glGenBuffers ( 1, &vbo );
+    glGenBuffers ( 1, &ebo );
+    glBindVertexArray ( vao );
+    glBindBuffer ( GL_ARRAY_BUFFER, vbo );
+    glBufferData ( GL_ARRAY_BUFFER, sizeof ( triangle_vertices ), triangle_vertices, GL_STATIC_DRAW );
+    glBindBuffer ( GL_ELEMENT_ARRAY_BUFFER, ebo );
+    glBufferData ( GL_ELEMENT_ARRAY_BUFFER, sizeof ( triangle_indices ), triangle_indices, GL_STATIC_DRAW );
+    glVertexAttribPointer ( 0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof ( float ), ( void * ) 0 );
+    glEnableVertexAttribArray ( 0 );
+    glVertexAttribPointer ( 1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof ( float ), ( void * ) ( 3 * sizeof ( float ) ) );
+    glEnableVertexAttribArray ( 1 );
+    glBindBuffer ( GL_ARRAY_BUFFER, 0 );
+    glBindVertexArray ( 0 );
+}
+
 int main ( int, char ** )
 {
     // Setup window
@@ -46,6 +79,14 @@ int main ( int, char ** )
         return 1;
     }
 
+    // create our geometries
+    unsigned int vbo, vao, ebo;
+    create_triangle ( vbo, vao, ebo );
+
+    // init shader
+    Shader triangle_shader;
+    triangle_shader.init ( FileManager::read ( "assets/simple-shader.vs" ), FileManager::read ( "assets/simple-shader.fs" ) );
+
     int screen_width, screen_height;
     glfwGetFramebufferSize ( window, &screen_width, &screen_height );
     glViewport ( 0, 0, screen_width, screen_height );
@@ -70,6 +111,16 @@ int main ( int, char ** )
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
+
+        // rendering our geometries
+        triangle_shader.use();
+        glBindVertexArray ( vao );
+        glDrawElements ( GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0 );
+        glBindVertexArray ( 0 );
+
+        triangle_shader.setUniform ( "color", 1.0f, 1.0f, 1.0f );
+        triangle_shader.setUniform ( "rotation", 0.0f );
+        triangle_shader.setUniform ( "translation", 0.0f, 0.0f );
 
         // Render dear imgui into screen
         ImGui::Render();
