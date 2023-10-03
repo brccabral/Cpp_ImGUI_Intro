@@ -129,9 +129,13 @@ int main ( int, char ** )
         static float translation[] = {0.0, 0.0};
         ImGui::SliderFloat2 ( "position", translation, -1.0, 1.0 );
 
+        // * color control
+        static float color[4] = { 1.0f,1.0f,1.0f,1.0f };
+        ImGui::ColorEdit3 ( "color", color );
+
         ImGui::End();
 
-        triangle_shader.setUniform ( "color", 1.0f, 1.0f, 1.0f );
+        triangle_shader.setUniform ( "color", color[0], color[1], color[2] );
         triangle_shader.setUniform ( "rotation", rotation );
         triangle_shader.setUniform ( "translation", translation[0], translation[1] );
 
