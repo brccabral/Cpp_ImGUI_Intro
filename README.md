@@ -5,16 +5,21 @@ https://www.youtube.com/watch?v=O2E-W9P-jKc
 
 - Clone the repo
     - `git clone https://github.com/ocornut/imgui`
-- Install glfw3 and glew
-    - `sudo apt install libglfw3-dev libglew-dev`
+- **Linux**
+    - Install glfw3 and glew
+        - `sudo apt install libglfw3-dev libglew-dev`
+    - Check glfw3 and glew flags
+        - `pkg-config --static --libs glfw3`
+        - `pkg-config --cflags glfw3`
+        - `pkg-config --static --libs glew`
+        - `pkg-config --cflags glew`
+- **Windows**
+    - Download GLEW https://glew.sourceforge.net/
+    - Define GLEW_DIR for cmake
+    - Compile against `glfw3 opengl32 glew32`
 - Add to include path
     - `path/to/imgui`
     - `path/to/imgui/backends`
-- Check glfw3 and glew flags
-    - `pkg-config --static --libs glfw3`
-    - `pkg-config --cflags glfw3`
-    - `pkg-config --static --libs glew`
-    - `pkg-config --cflags glew`
 - Compile all these sources
     - main.cpp
     - file_manager.cpp
